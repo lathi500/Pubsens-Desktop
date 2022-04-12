@@ -19,7 +19,7 @@ const upload = multer(storage);
 
 const { delete_mst_Programmes_Data,add_mst_Programmes, read_mst_Programmes, read_mst_ProgrammesById, update_mst_Programmes,delete_mst_Programmes } = require('../controllers/Programmes_controller');
 
-mst_ProgrammesRoutes.post('/add_mst_Programmes',upload.single('add_Programmes'), /*auth*/ add_mst_Programmes) 
+mst_ProgrammesRoutes.post('/add_mst_Programmes',upload.single('add_ProgrammesFile'), /*auth*/ add_mst_Programmes) 
     
 mst_ProgrammesRoutes.get('/read_mst_Programmes', auth, read_mst_Programmes)
 

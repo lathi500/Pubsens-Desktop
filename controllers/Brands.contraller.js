@@ -1,8 +1,10 @@
-
+let { JSDOM } = require("jsdom");
 let mst_Brands = require('../model/Brands');
 const excelToJson = require('convert-excel-to-json');
 const reader = require('xlsx');
 let path = require('path');
+
+const { window }  = new JSDOM();
 
 exports.add_mst_Brands = async (req, res, next) => 
 {
@@ -28,9 +30,11 @@ exports.add_mst_Brands = async (req, res, next) =>
             }
         }]
     });
+    const start = window.performance.now(); 
     result.Sheet1.shift();
     for(let i = 0;i < result.Sheet1.length;i++)
     {
+        const start = window.performance.now(); 
         const { SourceChannelName,ChannelName } = result.Sheet1[i];
         const oldUser = await mst_Brands.findOne({ SourceChannelName,ChannelName });
 
@@ -57,7 +61,12 @@ exports.add_mst_Brands = async (req, res, next) =>
                   
             })
         }
+        const stop = window.performance.now();
+        result.Sheet1[i].Time = `${(stop - start)/1000} seconds`;
     }
+    const stop = window.performance.now();
+    console.log(` Time Taken For Processing Data: ${(stop - start)/1000} seconds`);
+    
     res.sendFile(file, (err) =>
     {
         if(err)

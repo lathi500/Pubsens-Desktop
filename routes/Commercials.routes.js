@@ -19,7 +19,7 @@ const upload = multer(storage);
 
 const { delete_mst_Commercials_Data, add_mst_Commercials, read_mst_Commercials, read_mst_CommercialsById, update_mst_Commercials,delete_mst_Commercials } = require('../controllers/Commercials.controller');
 
-mst_CommercialsRoute.post('/add_mst_Commercials', upload.single('add_CommercialsFile'), /*auth */ add_mst_Commercials) 
+mst_CommercialsRoute.post('/add_mst_Commercials', upload.single('add_CommercialFile'), /*auth */ add_mst_Commercials) 
     
 mst_CommercialsRoute.get('/read_mst_Commercials', auth, read_mst_Commercials)
 

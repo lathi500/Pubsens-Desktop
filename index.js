@@ -25,6 +25,9 @@ const mst_AdvertisersRoute = require('./routes/Advertisers.routes')
 const mst_BrandsRoute = require('./routes/Brands.routes')
 const mst_CommercialsRoutes = require('./routes/Commercials.routes')
 const mst_ProgrammesRoutes = require('./routes/Programmes.routes')
+const mst_UserRoutes = require('./routes/Users.routes.js')
+const mst_VendorsRoutes = require('./routes/Vendors.routes.js')
+const mst_ProgrammesAbbrRoutes = require('./routes/ProgrammesAbbr.routes.js')
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,13 +36,16 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors());
  
-// app.use(express.static(path.join(__dirname, 'dist/angular-mean-crud-tutorial')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use('/api', mst_AdvertisersRoute)
 app.use('/api', mst_BrandsRoute)
 app.use('/api', mst_CommercialsRoutes)
 app.use('/api', mst_ProgrammesRoutes)
 app.use('/api', LoginRoute)
+app.use('/api', mst_UserRoutes)
+app.use('/api', mst_VendorsRoutes)
+app.use('/api', mst_ProgrammesAbbrRoutes )
 
 // app.use(express.static(path.join(__dirname,'index.html')));
 app.set('view engine', 'html');
@@ -64,9 +70,9 @@ app.get('/', (req, res) => {
   res.render('index.html');
 });
  
-app.get('*', (req, res) => {
-  res.send('test');
-});
+ app.get('/api/add_mst_Advertisers', (req, res) => {
+   res.send('test');
+ });
  
 
 app.use(function (err, req, res, next) {

@@ -1,25 +1,215 @@
 <!DOCTYPE html>
+<html>
+
+ <head> <!--<link rel="stylesheet" type="text/css" href="../public/index.css"> -->
+</head>
+<style>
+    #loading {
+        width: 2rem;
+        height: 2rem;
+        border: 5px solid #f3f3f3;
+        border-top: 6px solid #9c41f2;
+        border-radius: 100%;
+        margin: auto;
+        visibility: hidden;
+        animation: spin 1s infinite linear;
+      }
+      
+      #loading.display {
+          visibility: visible;
+      }
+      
+      @keyframes spin {
+          from {
+              transform: rotate(0deg);
+          }
+          to {
+              transform: rotate(360deg);
+          }
+      }
+</style>
 <body>
-    <head>
-    <form action="/api/add_mst_Advertisers" enctype="multipart/form-data" method="post">
-        <input id="fileSelect" name="add_AdvertisersFile" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />  
-        <button type="submit"> UploadAdvertisersData </button>
-    </form><br><br>
 
-    <form action="/api/add_mst_Brands" enctype="multipart/form-data" method="post">
-        <input id="fileSelect" name="add_BrandFile" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />  
-        <button type="submit"> UploadBrandsData  </button>
-    </form><br><br>
-        
-    <form action="/api/add_mst_Commercials" enctype="multipart/form-data" method="post">
-        <input id="fileSelect" name="add_CommercialsFile" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />  
-        <button type="submit"> UploadCommercialsData  </button>
-    </form><br><br>   
+    <label for="myfile">Select Advertisers File:</label>
+    <input id="uploadAdvfile" name="add_AdvertisersFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createAdvertiser()" id="SubmitFile"> UploadAdvertiseData </button>
+    <div id="loading"></div>
+    <h3 id="showoutput" ></h3>
+    <br><br>
 
-    <form action="/api/add_mst_Programmes" enctype="multipart/form-data" method="post">
-        <input id="fileSelect" name="add_Programmes" type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />  
-        <button type="submit"> UploadProgrammsData  </button>
-    </form>   
+    <label for="myfile">Select Brands File:</label>
+    <input id="uploadBrandfile" name="add_BrandFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createBrands()"> UploadBrandsData </button>
+    <h1 id="OnSubmit"></h1>
+    <br><br>
 
-    </head>
-</body>
+
+    <label for="myfile">Select Commercials File:</label>
+    <input id="uploadCommercialsfile" name="add_CommercialsFile" type="file"accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createCommercials()"> UploadCommercialsData </button>
+    
+    <br><br>
+
+    <label for="myfile">Select Programmes File:</label>
+    <input id="uploadProgrammesfile" name="add_ProgrammesFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createProgrammes()"> UploadProgrammsData </button>
+
+    <br><br>
+
+    <label for="myfile">Select Users File:</label>
+    <input id="uploadUsersfile" name="add_UsersFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createUsers()"> UploadUsersData </button>
+
+    <br><br>
+
+    <label for="myfile">Select Vendors File:</label>
+    <input id="uploadVendorsfile" name="add_VendorsFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createVendors()"> UploadVendorsData </button>
+
+    <br><br>
+
+
+    <label for="myfile">Select PrpgrmmesAbbr File:</label>
+    <input id="uploadPrpgrmmesAbbrfile" name="add_PrpgrmmesAbbrFile" type="file"
+        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+    <button type="submit" onclick="createPrpgrmmesAbbr()" > UploadPrpgrmmesAbbrData </button>
+
+    <br><br>
+
+</body> 
+<script>
+const loader = document.querySelector("#loading");
+
+function displayLoading()
+{
+    loader.classList.add("display");
+
+    setTimeout(() => {
+        loader.classList.remove("display");
+    }, 2000);
+}
+
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
+
+<script>
+    function createAdvertiser() {
+        let file = $('#uploadAdvfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_AdvertisersFile', file);
+        console.log(file)
+        displayLoading()
+        $.ajax({
+            url: "http://localhost:8000/api/add_mst_Advertisers",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            complete: (response) => {
+                setTimeout(() => {
+                    response.status == 200 ? $('#showoutput').html(response.responseText) : $('#showoutput').html('error') ;
+                }, 2000);
+            },        
+        });
+    }
+    
+    function createBrands() {
+        let file = $('#uploadBrandfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_BrandFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/add_mst_Brands",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            error: (err) => {
+                console.log('error', err);
+            },
+             success: () => {
+                console.log('File Updated...')
+            }
+        })
+
+    }
+
+    function createCommercials() {
+        let file = $('#uploadCommercialsfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_CommercialFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/add_mst_Commercials",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    function createProgrammes() {
+        let file = $('#uploadProgrammesfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_ProgrammesFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/add_mst_Programmes",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    function createUsers() {
+        let file = $('#uploadUsersfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_UsersFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/addUsers",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    function createVendors() {
+        let file = $('#uploadVendorsfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_VendorsFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/addVendors",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false
+        });
+    }
+
+    function createPrpgrmmesAbbr() {
+        let file = $('#uploadPrpgrmmesAbbrfile').get(0).files[0];
+        const formData = new FormData();
+        formData.append('add_PrpgrmmesAbbrFile', file);
+        console.log(file)
+        $.ajax({
+            url: "http://localhost:8000/api/addprogrammesAbbr",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false
+        });
+    }
+
+
+</script>
+
+</html>

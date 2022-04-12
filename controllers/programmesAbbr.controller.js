@@ -1,43 +1,41 @@
-let excelToJson = require('convert-excel-to-json');
-let path = require('path');
-const reader = require('xlsx');
-let mst_Programmes = require('../model/Programmes');
 
-exports.add_mst_Programmes = async (req, res, next) => 
-{
+let programmesAbbr = require('../model/ProgrammsAbbr');
+const excelToJson = require('convert-excel-to-json');
+const reader = require('xlsx');
+let path = require('path');
+
+exports.addProgrammesAbbr = async (req, res, next) => {
 
     const file = path.join(__dirname, '../updatedFile/' + req.file.originalname)
-
+    
     const result = excelToJson({
         sourceFile: path.join(__dirname, '../uploads/' + req.file.originalname),
-
         sheets:[{
             name: 'Sheet1',
             columnToKey: {
-                A: 'ProgrammeID',
-                B: 'SourceProgrammeName',
-                C: 'ProgrammeName',
-                D: 'IsActive',
-                E: 'CreatedBy',
-                F: 'CreatedDate',
-                G: 'ModifiedBy',
-                H: 'ModifiedDate',
-                J: 'Rmark'
-
+                A: 'PGM_ABBR_ID',
+                B: 'PGM_Abbr',
+                D: 'AbbrType',
+                E: 'IsActive',
+                F: 'CreatedBy',
+                G: 'CreatedDate',
+                H: 'ModifiedBy',
+                I: 'ModifiedDate'
             }
         }]
     });
+   
     const start = window.performance.now(); 
     result.Sheet1.shift();
     for(let i = 0;i < result.Sheet1.length;i++)
     {
         const start = window.performance.now(); 
-        const { SourceProgrammeName,ProgrammeName } = result.Sheet1[i];
-        const oldUser = await mst_Programmes.findOne({ SourceProgrammeName,ProgrammeName });
+        const { PGM_Abbr,CreatedBy } = result.Sheet1[i];
+        const oldUser = await programmesAbbr.findOne({ PGM_Abbr,CreatedBy });
 
         if(oldUser)
         {
-            mst_Programmes.updateOne(result.Sheet1[i], () => 
+            programmesAbbr.updateOne(result.Sheet1[i], () => 
             {
                     const workBook = reader.utils.book_new()
                     result.Sheet1[i].Rmark = 'update'
@@ -48,14 +46,13 @@ exports.add_mst_Programmes = async (req, res, next) =>
         }
         else
         {
-            mst_Programmes.create(result.Sheet1[i], () => 
+            programmesAbbr.create(result.Sheet1[i], () => 
             {
                     const workBook = reader.utils.book_new()
                     result.Sheet1[i].Rmark = 'Isert'
                     const workShit = reader.utils.json_to_sheet(result.Sheet1);
                     reader.utils.book_append_sheet(workBook, workShit)
                     reader.writeFile(workBook,`./updatedFile/${req.file.originalname}`);
-                  
             })
         }
         const stop = window.performance.now();
@@ -75,23 +72,13 @@ exports.add_mst_Programmes = async (req, res, next) =>
             console.log("Updated File Downloaded Successfully.")
         }
     })
+
 }
 
-exports.read_mst_Programmes = (req, res, next) =>
+    
+exports.getProgrammesAbbr = (req, res, next) =>
 {
-    mst_Programmes.find((error, data) => {
-        if (error) {
-            return next(error);
-        }
-        else {
-            res.json(data);
-        }
-    })
-}
-
-exports.read_mst_ProgrammesById = (req, res, next) =>
-{
-    mst_Programmes.findById(req.params.id, (error, data) => {
+    programmesAbbr.find((error, data) => {
         if (error) {
             return next(error);
         }
@@ -102,9 +89,22 @@ exports.read_mst_ProgrammesById = (req, res, next) =>
 }
 
 
-exports.update_mst_Programmes = (req, res, next) =>
+exports.getProgrammesAbbrById = (req, res, next) =>
 {
-    mst_Programmes.findByIdAndUpdate(req.params.id,
+    programmesAbbr.findById(req.params.id, (error, data) => {
+        if (error) {
+            return next(error);
+        }
+        else {
+            res.json(data);
+        }
+    })
+}
+
+
+exports.updateProgrammesAbbr = (req, res, next) =>
+{
+    programmesAbbr.findByIdAndUpdate(req.params.id,
         {
             $set: req.body
         }, { new: true }, (error, data) => {
@@ -120,10 +120,10 @@ exports.update_mst_Programmes = (req, res, next) =>
         })
 }
 
-exports.delete_mst_Programmes = (req, res, next) =>
+exports.deleteProgrammesAbbr = (req, res, next) =>
 {
 
-    mst_Programmes.findByIdAndUpdate (req.params.id, {
+    programmesAbbr.findByIdAndUpdate (req.params.id, {
         $set: 
         {
             IsActive: 0
@@ -139,7 +139,9 @@ exports.delete_mst_Programmes = (req, res, next) =>
         }
     })
 }
-exports.delete_mst_Programmes_Data = async (req, res) => {
-    await mst_Programmes.deleteMany();
+
+exports.deleteAllProgrammesAbbrData = async (req, res) =>
+{
+   await programmessAbbr.deleteMany();
     res.json("Data deleted....")
-  }
+}

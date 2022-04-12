@@ -27,9 +27,11 @@ exports.add_mst_Commercials = async (req, res, next) =>
             }
         }]
     });
+    const start = window.performance.now(); 
     result.Sheet1.shift();
     for(let i = 0;i < result.Sheet1.length;i++)
     {
+        const start = window.performance.now(); 
         const { SourceCommercialName,CommercialName } = result.Sheet1[i];
         const oldUser = await mst_Commercials.findOne({ SourceCommercialName,CommercialName });
 
@@ -56,7 +58,12 @@ exports.add_mst_Commercials = async (req, res, next) =>
                   
             })
         }
+        const stop = window.performance.now();
+        result.Sheet1[i].Time = `${(stop - start)/1000} seconds`;
     }
+    const stop = window.performance.now();
+    console.log(` Time Taken For Processing Data: ${(stop - start)/1000} seconds`);
+    
     res.sendFile(file, (err) =>
     {
         if(err)
